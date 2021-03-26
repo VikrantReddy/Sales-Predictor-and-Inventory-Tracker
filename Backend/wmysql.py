@@ -76,13 +76,31 @@ class sql_queries():
 
 
     def setup_tables(self):
-        self.declare_table("accounts", [
-            "username VARCHAR(25) DEFAULT NULL UNIQUE",
-            "password VARCHAR(150) DEFAULT NULL",
-            "email VARCHAR(150) NOT NULL UNIQUE",
-            "email_login VARCHAR(150) NOT NULL",
-            "email_password VARCHAR(150) NOT NULL"])
+        self.declare_table("orders", [
+            "customer_name VARCHAR(50) NOT NULL"
+            "order_id SMALLINT NOT NULL AUTO_INCREMENT PRIMARY KEY",
+            "paid_at_date VARCHAR(5) NOT NULL",
+            "paid_at_time VARCHAR(5) NOT NULL",
+        ])
+        
+        self.declare_table("order_details",[
+            "order_detail_id SMALLINT NOT NULL AUTO_INCREMENT PRIMARY KEY"
+            "order_id SMALLINT NOT NULL",
+            "product_sku MEDIUMINT NOT NULL",
+        ])
 
+        self.declare_table("products",[
+            "product_sku MEDIUMINT NOT NULL PRIMARY KEY",
+            "price TINYINT NOT NULL",
+            "img_url TEXT CHARACTER SET latin1",
+            "product_name TEXT CHARACTER SET latin1",
+        ])
+
+    def add_product(self):
+        pass
+
+    def add_order(self):
+        pass
 
     def get_user_for_comment(self,trait):
         data = self.wsql.execute("SELECT username FROM account_traits WHERE username IS NOT NULL AND account_trait = %s",trait)
