@@ -3,6 +3,8 @@ import logging
 import time
 import random
 
+from models import Product,Order,Order_Detail
+
 is_local_test_instance = True
 
 class wmysql():
@@ -57,7 +59,7 @@ class sql_queries():
         else:
             self.allow_deleting = False
 
-        self.wsql = wmysql(host='127.0.0.1', user='marketing', passwd='xIHG0MMZOe1pN7VGfQ47aV', database='reddit')
+        self.wsql = wmysql(host='127.0.0.1', user='analyst', passwd='xIHG0MMZOe1pN7VGfQ47aV', database='icps')
 
         if not self.allow_deleting:
             self.wsql.execute("SET SESSION sql_mode = 'STRICT_ALL_TABLES'")
@@ -77,14 +79,15 @@ class sql_queries():
 
     def setup_tables(self):
         self.declare_table("orders", [
-            "customer_name VARCHAR(50) NOT NULL"
+            "customer_name VARCHAR(50) NOT NULL",
             "order_id SMALLINT NOT NULL AUTO_INCREMENT PRIMARY KEY",
             "paid_at_date VARCHAR(5) NOT NULL",
             "paid_at_time VARCHAR(5) NOT NULL",
+            "trained BOOLEAN DEFAULT FALSE"
         ])
-        
+    
         self.declare_table("order_details",[
-            "order_detail_id SMALLINT NOT NULL AUTO_INCREMENT PRIMARY KEY"
+            "order_detail_id SMALLINT NOT NULL AUTO_INCREMENT PRIMARY KEY",
             "order_id SMALLINT NOT NULL",
             "product_sku MEDIUMINT NOT NULL",
         ])
@@ -92,25 +95,27 @@ class sql_queries():
         self.declare_table("products",[
             "product_sku MEDIUMINT NOT NULL PRIMARY KEY",
             "price TINYINT NOT NULL",
-            "img_url TEXT CHARACTER SET latin1",
-            "product_name TEXT CHARACTER SET latin1",
+            "img_url TEXT CHARACTER SET latin1 NOT NULL",
+            "product_name TEXT CHARACTER SET latin1 NOT NULL",
         ])
 
-    def add_product(self):
-        pass
+    def add_product(self,product:Product):
+        self.wsql.execute("INSERT INTO products (product_sku,price,img_url,product_name) VALUES (%s,%s,%s,%s)",product.produc_sku,product.price,product.img_url,product.product_name)
 
-    def add_order(self):
-        pass
+    def add_order(self,order:Order):
+        self.wsql.execute("INSERT INTO orders (customer_name,order_id,paid_at_date,paid_at_time,trained) VALUES (%s,%s,%s,%s,%s)",order.customer_name,order.order_id,order.paid_at_date,order.paid_at_time,order.trained)
 
-    def get_user_for_comment(self,trait):
-        data = self.wsql.execute("SELECT username FROM account_traits WHERE username IS NOT NULL AND account_trait = %s",trait)
-        
-        if len(data):
-            return data[0][random.randint(0,len(data)-1)]
+    def add_order_details(self,order_detail:Order_Detail):
+        self.wsql.execute("INSERT INTO order_details (order_detail_id,order_id,product_sku) VALUES (%s,%s,%s)",order_detail.order_detail_id,order_detail.order_id,order_detail.product_sku)
+
+    def get_order(self,order_id):
+        result = self.wsql.execute("SELECT * FROM orders WHERE order_id=%s",order_id)[0] 
+        return dict(zip(("customer_name","order_id","paid_at_date","paid_at_time","trained"),result))
+
+    def delete_order(self,order_id):
+        self.wsql.execute("DELETE FROM orders WHERE order_id=%s",order_id)
+        self.wsql.execute("DELETE FROM order_details WHERE order_id=%s",order_id)
+
 
 if __name__ == "__main__":
     sqldb = sql_queries()
-    # test = wmysql(host='127.0.0.1', user='fireice_test', passwd='fireice_test', database='reddit_test')
-    #print(test.execute('describe comments'))
-    #print(test.execute('select * from comments limit 10'))
-    #print(test.execute('select * from comments where id = %s', 'fwe4wii'))
