@@ -2,9 +2,11 @@ import operator
 
 import matplotlib.pyplot as plt
 import numpy as np
-from sklearn import datasets, linear_model
+from sklearn import datasets
+from sklearn import linear_model
 from sklearn.linear_model import LinearRegression
-from sklearn.metrics import mean_squared_error, r2_score
+from sklearn.metrics import mean_squared_error
+from sklearn.metrics import r2_score
 from sklearn.preprocessing import PolynomialFeatures
 
 
