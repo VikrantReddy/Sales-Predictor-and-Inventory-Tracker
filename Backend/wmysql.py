@@ -110,7 +110,15 @@ class sql_queries():
 
     def get_order(self,order_id):
         result = self.wsql.execute("SELECT * FROM orders WHERE order_id=%s",order_id)[0] 
-        return dict(zip(("customer_name","order_id","paid_at_date","paid_at_time","trained"),result))
+        order_data = dict(zip(("customer_name","order_id","paid_at_date","paid_at_time","trained"),result)) 
+        
+        order_details = self.get_order_details(order_id)
+        order_data.update({"items":order_details})
+        
+        return order_data
+    
+    def get_order_details(self,order_id):
+        return self.wsql.execute("SELECT * FROM order_details WHERE order_id=%s",order_id)
 
     def delete_order(self,order_id):
         self.wsql.execute("DELETE FROM orders WHERE order_id=%s",order_id)
