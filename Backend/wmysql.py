@@ -95,7 +95,7 @@ class sql_queries():
         self.declare_table("products",[
             "product_sku MEDIUMINT NOT NULL PRIMARY KEY",
             "price TINYINT NOT NULL",
-            "img_url TEXT CHARACTER SET latin1 NOT NULL",
+            "img_url TEXT CHARACTER SET latin1",
             "product_name TEXT CHARACTER SET latin1 NOT NULL",
         ])
 

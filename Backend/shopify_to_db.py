@@ -1,6 +1,7 @@
 import csv
 from sqldb import sqldb
-from models import Order,Order_Detail
+from models import Order,Order_Detail,Product
+import random
 
 data = []
 
@@ -30,3 +31,10 @@ for row in data:
         }
     else:
         temp["items"].append(row["Lineitem sku"])
+
+products = {i["Lineitem sku"]:i["Lineitem name"] for i in data}
+
+for sku,name in products.items():
+    price = round(2.5 + random.normalvariate(5.0,1.5),2)
+    product = Product(product_sku=sku,product_name=name,price=price)
+    sqldb.add_product(product)

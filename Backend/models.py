@@ -8,7 +8,7 @@ class Product:
         if len(args) == 0:
             self.product_sku = kwargs["product_sku"]
             self.price = kwargs["price"]
-            self.img_url = kwargs["img_url"]
+            self.img_url = kwargs.get("img_url",None)
             self.product_name = kwargs["product_name"]
         else:
             self.build_object(args[0])
