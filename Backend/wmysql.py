@@ -93,14 +93,14 @@ class sql_queries():
         ])
 
         self.declare_table("products",[
-            "product_sku MEDIUMINT NOT NULL PRIMARY KEY",
+            "product_sku MEDIUMINT PRIMARY KEY",
             "price TINYINT NOT NULL",
             "img_url TEXT CHARACTER SET latin1",
             "product_name TEXT CHARACTER SET latin1 NOT NULL",
         ])
 
     def add_product(self,product:Product):
-        self.wsql.execute("INSERT INTO products (product_sku,price,img_url,product_name) VALUES (%s,%s,%s,%s)",product.produc_sku,product.price,product.img_url,product.product_name)
+        self.wsql.execute("INSERT INTO products (product_sku,price,img_url,product_name) VALUES (%s,%s,%s,%s)",product.product_sku,product.price,product.img_url,product.product_name)
 
     def add_order(self,order:Order):
         self.wsql.execute("INSERT INTO orders (customer_name,order_id,paid_at_date,paid_at_time,trained) VALUES (%s,%s,%s,%s,%s)",order.customer_name,order.order_id,order.paid_at_date,order.paid_at_time,order.trained)
@@ -119,11 +119,25 @@ class sql_queries():
     
     def get_order_details(self,order_id):
         return self.wsql.execute("SELECT * FROM order_details WHERE order_id=%s",order_id)
+    
+    def get_product_worth(self,product_sku):
+        return self.wsql.execute("SELECT price FROM products WHERE product_sku=%s",product_sku)[0]
 
     def delete_order(self,order_id):
         self.wsql.execute("DELETE FROM orders WHERE order_id=%s",order_id)
         self.wsql.execute("DELETE FROM order_details WHERE order_id=%s",order_id)
-
+    
+    def get_data_for_sales(self):
+        result = self.wsql.execute("SELECT paid_at_date,paid_at_time,order_id FROM orders")
+        orders = {}
+        for i in result:
+            order_id = i[2]
+            value = 0 
+            order_details = self.get_order_details(order_id)
+            for index,sku,j in order_details:
+                value += self.get_product_worth(j)[0]
+            orders[i[0]] = orders.get(i[0],0) + value 
+        return orders
 
 if __name__ == "__main__":
     sqldb = sql_queries()
