@@ -41,14 +41,13 @@ class Order:
         self.order_id = json_dict["order_id"]
         self.paid_at_date = json_dict["paid_at_date"]
         self.paid_at_time = json_dict["paid_at_time"]
+        self.details = []
         
-        def add_details():
-            for item in json_dict["items"]:
-                if item.strip():
-                    detail = Order_Detail(order_id=self.order_id,product_sku=item)
-                    self.details.append(detail)
+        for item in json_dict["items"]:
+            if item.strip():
+                detail = Order_Detail(order_id=self.order_id,product_sku=item)
+                self.details.append(detail)
 
-        add_details()
 
 class Order_Detail:
     order_id = None

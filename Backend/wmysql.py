@@ -87,7 +87,7 @@ class sql_queries():
         ])
     
         self.declare_table("order_details",[
-            "order_detail_id SMALLINT NOT NULL AUTO_INCREMENT PRIMARY KEY",
+            "order_detail_id MEDIUMINT NOT NULL AUTO_INCREMENT PRIMARY KEY",
             "order_id SMALLINT NOT NULL",
             "product_sku MEDIUMINT NOT NULL",
         ])
