@@ -24,10 +24,10 @@ with Progress() as progress:
         if row["Financial Status"] == "paid":
             if len(temp) > 0:
                 order = Order(temp)
-                sqldb.add_order(order)
                 for detail in order.details:
-                    sqldb.add_order_details(detail)
-                    time.sleep(0.02)
+                    if detail.product_sku.isnumeric():
+                        sqldb.add_order_details(detail)
+                        time.sleep(0.02)
 
             timestamp = row["Paid at"].split()
             temp = {
