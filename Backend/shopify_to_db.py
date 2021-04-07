@@ -24,6 +24,7 @@ with Progress() as progress:
         if row["Financial Status"] == "paid":
             if len(temp) > 0:
                 order = Order(temp)
+                sqldb.add_order(order)
                 for detail in order.details:
                     if detail.product_sku.isnumeric():
                         sqldb.add_order_details(detail)
