@@ -7,11 +7,10 @@ import time
 
 data = []
 
-with open('Datasets/orders.csv') as file:
+with open('Datasets/orders.csv',encoding="utf-8") as file:
     reader = csv.DictReader(file)
     data = list(reader)
 
-temp = {}
 
 data = [dict(i) for i in data]
 
@@ -19,7 +18,8 @@ with Progress() as progress:
     products = {i["Lineitem sku"]:i["Lineitem name"] for i in data}
     task1 = progress.add_task("[cyan]Adding orders..",total=len(data))
     task2 = progress.add_task("[green]Adding products..",total=len(products))
-
+    temp = {}
+    
     for row in data:
         if row["Financial Status"] == "paid":
             if len(temp) > 0:
@@ -28,7 +28,9 @@ with Progress() as progress:
                 for detail in order.details:
                     if detail.product_sku.isnumeric():
                         sqldb.add_order_details(detail)
+                        print(detail.order_id)
                         time.sleep(0.02)
+                temp = {}
 
             timestamp = row["Paid at"].split()
             temp = {
@@ -47,7 +49,6 @@ with Progress() as progress:
             continue
         price = round(2.5 + random.normalvariate(5.0,1.5),2)
         product = Product(product_sku=sku,product_name=name,price=price)
-        print(product.product_sku)
         sqldb.add_product(product)
         progress.update(task2,advance=1)
 
