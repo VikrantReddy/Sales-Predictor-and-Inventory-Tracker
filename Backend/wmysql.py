@@ -136,7 +136,7 @@ class sql_queries():
             order_details = self.get_order_details(order_id)
             for index,sku,j in order_details:
                 value += self.get_product_worth(j)[0]
-            orders[i[0]] = orders.get(i[0],0) + value 
+            orders[i[0] + i[1].split(":")[0]] = orders.get(i[0]+i[1].split(":")[0],0) + value 
         return orders
 
 if __name__ == "__main__":
