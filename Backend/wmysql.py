@@ -3,7 +3,9 @@ import random
 import time
 
 import mysql.connector
-from models import Order, Order_Detail, Product
+from models import Order
+from models import Order_Detail
+from models import Product
 
 is_local_test_instance = True
 

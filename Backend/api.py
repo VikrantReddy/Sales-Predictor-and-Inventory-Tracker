@@ -1,5 +1,8 @@
-from flask import Flask, request
-from models import Order, Order_Detail, Product
+from flask import Flask
+from flask import request
+from models import Order
+from models import Order_Detail
+from models import Product
 from sqldb import sqldb
 
 app = Flask(__name__)

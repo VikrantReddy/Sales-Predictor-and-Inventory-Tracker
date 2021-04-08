@@ -2,7 +2,9 @@ import csv
 import random
 import time
 
-from models import Order, Order_Detail, Product
+from models import Order
+from models import Order_Detail
+from models import Product
 from rich.progress import Progress
 from sqldb import sqldb
 
