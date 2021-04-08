@@ -7,7 +7,7 @@ import time
 
 data = []
 
-with open('Datasets/orders.csv', encoding="utf-8") as file:
+with open("Datasets/orders.csv", encoding="utf-8") as file:
     reader = csv.DictReader(file)
     data = list(reader)
 
@@ -38,7 +38,7 @@ with Progress() as progress:
                 "paid_at_time": timestamp[1],
                 "paid_at_date": timestamp[0],
                 "customer_name": row["Billing Name"],
-                "items": [row["Lineitem sku"]]
+                "items": [row["Lineitem sku"]],
             }
         else:
             temp["items"].append(row["Lineitem sku"])
