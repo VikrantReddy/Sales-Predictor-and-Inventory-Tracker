@@ -1,9 +1,9 @@
-import mysql.connector
 import logging
-import time
 import random
+import time
 
-from models import Product, Order, Order_Detail
+import mysql.connector
+from models import Order, Order_Detail, Product
 
 is_local_test_instance = True
 

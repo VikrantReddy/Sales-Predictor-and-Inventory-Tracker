@@ -1,5 +1,5 @@
 from flask import Flask, request
-from models import Product, Order, Order_Detail
+from models import Order, Order_Detail, Product
 from sqldb import sqldb
 
 app = Flask(__name__)

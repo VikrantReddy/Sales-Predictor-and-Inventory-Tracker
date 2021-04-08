@@ -1,9 +1,10 @@
 import csv
-from sqldb import sqldb
-from models import Order, Order_Detail, Product
 import random
-from rich.progress import Progress
 import time
+
+from models import Order, Order_Detail, Product
+from rich.progress import Progress
+from sqldb import sqldb
 
 data = []
 
