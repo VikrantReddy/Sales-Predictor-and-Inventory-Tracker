@@ -14,7 +14,6 @@ with open("Datasets/orders.csv", encoding="utf-8") as file:
     reader = csv.DictReader(file)
     data = list(reader)
 
-
 data = [dict(i) for i in data]
 
 with Progress() as progress:

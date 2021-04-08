@@ -13,12 +13,10 @@ is_local_test_instance = True
 class wmysql:
     # wmysql(host='127.0.0.1', user='', passwd='', database='')
     def __init__(self, host=None, **kwargs):
-        self.mydb = mysql.connector.connect(
-            **kwargs,
-            charset="utf8mb4",
-            collation="utf8mb4_unicode_ci",
-            use_unicode=True
-        )
+        self.mydb = mysql.connector.connect(**kwargs,
+                                            charset="utf8mb4",
+                                            collation="utf8mb4_unicode_ci",
+                                            use_unicode=True)
 
     def execute_tuple(self, sql, args):
         logging.info("Executing SQL: " + sql)
@@ -80,8 +78,7 @@ class sql_queries:
         # Create SQL commands - NOTE - This is safe only because we are using constant strings
         # Don't have something stupid like input-defined table names
         rtable_sql = "CREATE TABLE IF NOT EXISTS {} ({}) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci".format(
-            table_name, args_str
-        )
+            table_name, args_str)
 
         # Execute SQL
         self.wsql.execute(rtable_sql)
@@ -144,9 +141,8 @@ class sql_queries:
         )
 
     def get_order(self, order_id):
-        result = self.wsql.execute("SELECT * FROM orders WHERE order_id=%s", order_id)[
-            0
-        ]
+        result = self.wsql.execute("SELECT * FROM orders WHERE order_id=%s",
+                                   order_id)[0]
         order_data = dict(
             zip(
                 (
@@ -157,8 +153,7 @@ class sql_queries:
                     "trained",
                 ),
                 result,
-            )
-        )
+            ))
 
         order_details = self.get_order_details(order_id)
         order_data.update({"items": order_details})
@@ -167,22 +162,20 @@ class sql_queries:
 
     def get_order_details(self, order_id):
         return self.wsql.execute(
-            "SELECT * FROM order_details WHERE order_id=%s", order_id
-        )
+            "SELECT * FROM order_details WHERE order_id=%s", order_id)
 
     def get_product_worth(self, product_sku):
         return self.wsql.execute(
-            "SELECT price FROM products WHERE product_sku=%s", product_sku
-        )[0]
+            "SELECT price FROM products WHERE product_sku=%s", product_sku)[0]
 
     def delete_order(self, order_id):
         self.wsql.execute("DELETE FROM orders WHERE order_id=%s", order_id)
-        self.wsql.execute("DELETE FROM order_details WHERE order_id=%s", order_id)
+        self.wsql.execute("DELETE FROM order_details WHERE order_id=%s",
+                          order_id)
 
     def get_data_for_sales(self):
         result = self.wsql.execute(
-            "SELECT paid_at_date,paid_at_time,order_id FROM orders"
-        )
+            "SELECT paid_at_date,paid_at_time,order_id FROM orders")
         orders = {}
         for i in result:
             order_id = i[2]
@@ -192,8 +185,7 @@ class sql_queries:
                 value += self.get_product_worth(j)[0]
 
             orders[i[0] + " " + i[1].split(":")[0]] = (
-                orders.get(i[0] + " " + i[1].split(":")[0], 0) + value
-            )
+                orders.get(i[0] + " " + i[1].split(":")[0], 0) + value)
         return orders
 
 
