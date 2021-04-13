@@ -183,9 +183,17 @@ class sql_queries:
             order_details = self.get_order_details(order_id)
             for index, sku, j in order_details:
                 value += self.get_product_worth(j)[0]
+            
+            timestamp = i[0].split("-")
+            month_to_days = {
+                                1:0,
+                                2:31,
+                                3:59
+                            }
+            timestamp_value = month_to_days[int(timestamp[1])] + int(timestamp[2])
+            timestamp_value = str(timestamp_value) + "-" + i[1].split(":")[0] 
+            orders[timestamp_value] = orders.get(timestamp_value, 0) + value
 
-            orders[i[0] + " " + i[1].split(":")[0]] = (
-                orders.get(i[0] + " " + i[1].split(":")[0], 0) + value)
         return orders
 
 

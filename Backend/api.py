@@ -1,5 +1,6 @@
 from flask import Flask
 from flask import request
+from flask import jsonify
 from models import Order
 from models import Order_Detail
 from models import Product
@@ -44,6 +45,15 @@ def add_product():
     data = request.json(force=True)
     product = Product(data)
     sqldb.add_product(product)
+
+@app.route("/", methods=["GET"])
+def homepage():
+    return "Welcome to the ICPS Project"
+
+@app.route("/get_graph_data/<timeframe>",methods=["GET"])
+def sales_data(timeframe):
+    if timeframe == "days":
+        return jsonify(sqldb.get_data_for_sales())
 
 
 if __name__ == "__main__":
