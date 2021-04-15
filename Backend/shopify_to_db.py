@@ -24,7 +24,7 @@ with Progress() as progress:
 
     for row in data:
         if row["Financial Status"] == "paid":
-            if len(temp) > 0:
+            if temp:
                 order = Order(temp)
                 sqldb.add_order(order)
                 for detail in order.details:

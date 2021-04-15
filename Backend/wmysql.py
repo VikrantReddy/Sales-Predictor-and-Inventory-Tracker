@@ -23,10 +23,7 @@ class wmysql:
         self.mydb.start_transaction()
         c = self.mydb.cursor()
         c.execute(sql, args)
-        if self.mydb.unread_result:
-            res = c.fetchall()
-        else:
-            res = []
+        res = c.fetchall() if self.mydb.unread_result else []
         self.mydb.commit()
         c.close()
         return res
@@ -36,10 +33,7 @@ class wmysql:
         self.mydb.start_transaction()
         c = self.mydb.cursor()
         c.executemany(sql, args_list)
-        if self.mydb.unread_result:
-            res = c.fetchall()
-        else:
-            res = []
+        res = c.fetchall() if self.mydb.unread_result else []
         self.mydb.commit()
         c.close()
         return res
@@ -55,11 +49,7 @@ class sql_queries:
 
     def __init__(self, allow_editing=False, allow_deleting=False):
         self.allow_editing = allow_editing
-        if allow_editing:
-            self.allow_deleting = allow_deleting
-        else:
-            self.allow_deleting = False
-
+        self.allow_deleting = allow_deleting if allow_editing == True else False
         self.wsql = wmysql(
             host="127.0.0.1",
             user="analyst",
@@ -161,8 +151,7 @@ class sql_queries:
         return order_data
 
     def get_order_details(self, order_id):
-        return self.wsql.execute(
-            "SELECT * FROM order_details WHERE order_id=%s", order_id)
+        return [i[0] for i in self.wsql.execute("SELECT product_sku FROM order_details WHERE order_id=%s", order_id)]
 
     def get_product_worth(self, product_sku):
         return self.wsql.execute(
@@ -173,19 +162,22 @@ class sql_queries:
         self.wsql.execute("DELETE FROM order_details WHERE order_id=%s",
                           order_id)
 
-    def get_data_for_sales(self):
-        result = self.wsql.execute(
-            "SELECT paid_at_date,paid_at_time,order_id FROM orders")
+    def get_data_for_sales(self,frequency):
         orders = {}
-        for i in result:
-            order_id = i[2]
-            value = 0
+        limit = "LIMIT 150" if frequency == "days" else ""
+        result = self.wsql.execute(f"SELECT paid_at_date,order_id FROM orders ORDER BY paid_at_date DESC {limit}")
+        for date,order_id in result:
             order_details = self.get_order_details(order_id)
-            for index, sku, j in order_details:
-                value += self.get_product_worth(j)[0]
+            value = sum(self.get_product_worth(sku)[0] for sku in order_details)
+            
+            if frequency == "days":
+                orders[date] = orders.get(date,0) + value 
+            elif frequency == "weeks":
+                split_date = date.split("-")
+                if split_date[1] == "03":
+                    date = int(split_date[2])//7
+                    orders[date] = orders.get(date,0) + value
 
-            orders[i[0] + " " + i[1].split(":")[0]] = (
-                orders.get(i[0] + " " + i[1].split(":")[0], 0) + value)
         return orders
 
 

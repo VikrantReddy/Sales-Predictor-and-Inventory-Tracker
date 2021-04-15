@@ -1,12 +1,31 @@
-from flask import Flask
-from flask import request
-from models import Order
-from models import Order_Detail
-from models import Product
+from flask import Flask,request,jsonify,render_template
+from models import Order,Order_Detail,Product
 from sqldb import sqldb
+from flask_cors import CORS, cross_origin
+from report import generate_report
+from flask_httpauth import HTTPBasicAuth
+from werkzeug.security import generate_password_hash, check_password_hash
 
 app = Flask(__name__)
+CORS(app)
+auth = HTTPBasicAuth()
 
+users = {
+    "vikrant": generate_password_hash("hello"),
+    "nikhil": generate_password_hash("bye"),
+    "trisanu": generate_password_hash("yo")
+}
+
+@auth.verify_password
+def verify_password(username, password):
+    if username in users and \
+            check_password_hash(users.get(username), password):
+        return username
+
+@app.route("/")
+@auth.login_required
+def home():
+    return render_template("index.html")
 
 @app.route("/order/<int:order_id>", methods=["GET", "POST", "DELETE"])
 def crud_order(order_id=None):
@@ -45,6 +64,14 @@ def add_product():
     product = Product(data)
     sqldb.add_product(product)
 
+@app.route("/get_order_data/<frequency>", methods=["GET"])
+def get_products(frequency):
+    return jsonify(sqldb.get_data_for_sales(frequency = frequency))
+
+@app.route("/generate_report", methods=["GET"])
+def get_report():
+    return generate_report()
+
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0")
+    app.run(host="0.0.0.0",debug=True)
