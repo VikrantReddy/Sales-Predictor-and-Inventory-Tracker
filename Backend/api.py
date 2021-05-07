@@ -27,6 +27,11 @@ def verify_password(username, password):
 def home():
     return render_template("index.html")
 
+
+@app.route("/check_password")
+def checkpass():
+    return check_password_hash(users.get(username), password):
+
 @app.route("/order/<int:order_id>", methods=["GET", "POST", "DELETE"])
 def crud_order(order_id=None):
     if request.method == "POST":
@@ -71,6 +76,14 @@ def get_products(frequency):
 @app.route("/generate_report", methods=["GET"])
 def get_report():
     return generate_report()
+
+@app.route("/login",methods=["GET"])
+def login():
+    return render_template("login.html")
+
+@app.route("/signup",methods=["GET"])
+def signup():
+    return render_template("signup.html")
 
 
 if __name__ == "__main__":
